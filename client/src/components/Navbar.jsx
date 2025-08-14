@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
 import { assets } from "../assets/assets.js";
+import { ShopContext } from "../context/ShopContext.jsx";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const {setShowSearch} = useContext(ShopContext);
 
   const navLinks = [
     { name: "HOME", path: "/" },
@@ -43,7 +45,7 @@ const Navbar = () => {
         {/* Icons */}
         <div className="flex items-center space-x-4">
           {/* Search */}
-          <button className="text-gray-700 hover:text-blue-600">
+          <button onClick={() => setShowSearch(true)} className="text-gray-700 hover:text-blue-600">
             <Search size={22} />
           </button>
 
