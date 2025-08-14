@@ -11,11 +11,13 @@ import PlaceOrder from './pages/PlaceOrder.jsx'
 import Orders from './pages/Orders.jsx'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
+import Searchbar from './components/Searchbar.jsx'
 
 const App = () => {
   return (
     <div className='bg-sky-50'>
       <Navbar />
+      <Searchbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/collection" element={<Collection />} />

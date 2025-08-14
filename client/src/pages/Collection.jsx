@@ -5,7 +5,7 @@ import { Title } from '../components/Title.jsx';
 import ProductItem from '../components/ProductItem.jsx';
 
 const Collection = () => {
-  const { products } = useContext(ShopContext);
+  const { products,search,showSearch } = useContext(ShopContext);
   const [showFilters, setShowFilters] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
   const [category, setCategory] = useState([]);
@@ -30,6 +30,12 @@ const Collection = () => {
 
   const applyFilters = () => {
     let productCopy = products.slice();
+
+    if(showSearch && search) {
+      productCopy = productCopy.filter(product =>
+        product.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
 
     if (category.length > 0) {
       productCopy = productCopy.filter(product => category.includes(product.category));
@@ -59,7 +65,7 @@ const Collection = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [category, subCategory]);
+  }, [category, subCategory,showSearch, search]);
 
   useEffect(() => {
     sortProducts();
@@ -119,7 +125,7 @@ const Collection = () => {
         {/* Product Section */}
         <div className="sm:w-3/4">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
-            <Title text1="ALL" text2="COLLECTION" />
+            <Title text1="ALL" text2="COLLECTION" textSize={'text-xl'}/>
             <select 
               className="border rounded-lg px-3 py-1 text-sm"
               onChange={(e) => setSortType(e.target.value)}

@@ -15,7 +15,7 @@ const LatestCollection = () => {
         <section className="relative overflow-hidden pb-16">
             {/* Content */}
             <div className="relative z-10 container mx-auto px-4">
-                <Title text1="Latest" text2="Collection" />
+                <Title text1="Latest" text2="Collection" textSize={'text-2xl md:text-3xl'}/>
                 <p className="max-w-3xl mx-auto text-center mb-10 text-gray-700 text-lg md:text-xl">
                     Discover our newest arrivals! Trendy, high-quality products curated just for you.
                 </p>

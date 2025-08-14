@@ -5,7 +5,7 @@ import { Title } from './Title.jsx';
 const OurPolicy = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-20">
-        <Title text1="OUR" text2="POLICIES"/>
+        <Title text1="OUR" text2="POLICIES" textSize={'text-2xl md:text-3xl'}/>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {/* Exchange Policy */}
         <div className="flex flex-col items-center text-center p-6 bg-white shadow-md rounded-lg hover:shadow-lg transition">
