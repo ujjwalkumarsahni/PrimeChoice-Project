@@ -6,7 +6,7 @@ import { ShopContext } from "../context/ShopContext.jsx";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const {setShowSearch} = useContext(ShopContext);
+  const {setShowSearch, getCartCount} = useContext(ShopContext);
   const navigate = useNavigate()
 
   const navLinks = [
@@ -51,12 +51,12 @@ const Navbar = () => {
           </button>
 
           {/* Cart */}
-          <button className="relative text-gray-700 hover:text-blue-600">
+          <Link to={'/cart'} className="relative text-gray-700 hover:text-blue-600">
             <ShoppingCart size={22} />
             <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-              5
+              {getCartCount() || 0}
             </span>
-          </button>
+          </Link>
 
           {/* Profile Dropdown */}
           <div className="group relative">

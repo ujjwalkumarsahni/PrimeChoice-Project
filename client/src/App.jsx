@@ -1,5 +1,6 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
 import Home from './pages/Home.jsx'
 import Collection from './pages/Collection.jsx'
 import About from './pages/About.jsx'
@@ -16,6 +17,7 @@ import Searchbar from './components/Searchbar.jsx'
 const App = () => {
   return (
     <div className='bg-sky-50'>
+      <ToastContainer />
       <Navbar />
       <Searchbar />
       <Routes>
