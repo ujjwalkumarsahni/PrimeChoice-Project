@@ -54,7 +54,7 @@ const Navbar = () => {
           <Link to={'/cart'} className="relative text-gray-700 hover:text-blue-600">
             <ShoppingCart size={22} />
             <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-              {getCartCount() || 0}
+              {getCartCount()}
             </span>
           </Link>
 
