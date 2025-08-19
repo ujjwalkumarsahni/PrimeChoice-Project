@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Title } from "../components/Title";
-import { assets } from "../assets/assets"; // razorpay & stripe images
+import { assets } from "../assets/assets";
 import CartTotal from "../components/CartTotal";
+import { ShopContext } from "../context/ShopContext.jsx";
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
+  const { navigate } = useContext(ShopContext)
 
   return (
     <div className="px-4 sm:px-8 py-8">
@@ -58,8 +60,8 @@ const PlaceOrder = () => {
           </div>
 
           <button
-            onClick={() => navigate('/')}
-            className="mt-8 bg-black text-white text-sm px-8 py-3 rounded hover:bg-gray-800 transition"
+            onClick={() => navigate('/orders')}
+            className=" mt-8 bg-black text-white text-sm px-8 py-3 rounded hover:bg-gray-800 transition"
           >
             PLACE ORDER
           </button>

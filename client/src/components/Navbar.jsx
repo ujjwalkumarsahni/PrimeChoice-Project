@@ -6,7 +6,7 @@ import { ShopContext } from "../context/ShopContext.jsx";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const {setShowSearch, getCartCount} = useContext(ShopContext);
+  const { setShowSearch, getCartCount } = useContext(ShopContext);
   const navigate = useNavigate()
 
   const navLinks = [
@@ -46,7 +46,7 @@ const Navbar = () => {
         {/* Icons */}
         <div className="flex items-center space-x-4">
           {/* Search */}
-          <button onClick={() => {setShowSearch(true); navigate('collection')}} className="text-gray-700 hover:text-blue-600">
+          <button onClick={() => { setShowSearch(true); navigate('collection') }} className="text-gray-700 hover:text-blue-600">
             <Search size={22} />
           </button>
 
@@ -60,10 +60,9 @@ const Navbar = () => {
 
           {/* Profile Dropdown */}
           <div className="group relative">
-            <button
-              className="text-gray-700 hover:text-blue-600">
-              <User size={22} />
-            </button>
+            <Link to={"/login"} className="text-gray-700 hover:text-blue-600">
+                <User size={22} />
+            </Link>
             <div className="group-hover:block hidden absolute right-0 top-5 w-45 bg-white shadow-lg rounded-lg py-2">
               <Link
                 to="/profile"
