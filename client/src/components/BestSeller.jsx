@@ -11,7 +11,7 @@ const BestSeller = () => {
     useEffect(() => {
         const bestSellerProducts = products.filter((item) => (item.bestseller));
         setBestSellers(bestSellerProducts.slice(0, 5));
-    }, []);
+    }, [products]);
     return (
         <section className="relative overflow-hidden pb-16">
             <div className='relative z-10 container mx-auto px-4'>
