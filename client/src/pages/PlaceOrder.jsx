@@ -1,13 +1,15 @@
 import React, { useContext, useState } from "react";
 import { Title } from "../components/Title";
 import { assets } from "../assets/assets";
-import CartTotal from "../components/CartTotal";
+import CartTotal from "../components/CartTotal.jsx";
 import { ShopContext } from "../context/ShopContext.jsx";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
-  const { navigate } = useContext(ShopContext)
-  const [formData,setFormData] = useState({
+  const { navigate, backendUrl, cartItems, setCartItems, token, getCartAmount, products, delivery_fee } = useContext(ShopContext)
+  const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
@@ -19,34 +21,83 @@ const PlaceOrder = () => {
     phone: ''
   })
 
-  const onChangeHandler = (event) =>{
-    
+  const onChangeHandler = (event) => {
+    const name = event.target.name
+    const value = event.target.value
+
+    setFormData(data => ({ ...data, [name]: value }))
+  }
+
+  const onsubmitHandler = async (e) => {
+    e.preventDefault()
+    try {
+      let orderItems = []
+      for (const items in cartItems) {
+        for (const item in cartItems[items]) {
+          if (cartItems[items][item] > 0) {
+            const itemInfo = structuredClone(products.find(product => product._id === items))
+            if (itemInfo) {
+              itemInfo.size = item
+              itemInfo.quantity = cartItems[items][item]
+              orderItems.push(itemInfo)
+            }
+          }
+        }
+      }
+      
+      let orderData = {
+        address: formData,
+        items: orderItems,
+        amount: getCartAmount() + delivery_fee
+      }
+
+      switch (method) {
+
+        // api calls for COD
+        case 'cod':
+            const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {headers: {token}})
+            if(response.data.success){
+              setCartItems({})
+              navigate('/orders')
+            } else{
+              toast.error(response.data.message)
+            }
+          break;
+      
+        default:
+          break;
+      }
+      
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message)
+    }
   }
 
   return (
     <div className="px-4 sm:px-8 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
+      <form onSubmit={onsubmitHandler} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
         {/* Delivery Information */}
         <div>
           <Title text1="DELIVERY" text2="INFORMATION" textSize="text-lg md:text-xl" />
-          <form className="mt-6 space-y-4">
+          <div on className="mt-6 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input type="text" placeholder="First name" className="border rounded px-3 py-2 w-full" />
-              <input type="text" placeholder="Last name" className="border rounded px-3 py-2 w-full" />
+              <input required onChange={onChangeHandler} name='firstName' value={formData.firstName} type="text" placeholder="First name" className="border rounded px-3 py-2 w-full" />
+              <input required onChange={onChangeHandler} name="lastName" value={formData.lastName} type="text" placeholder="Last name" className="border rounded px-3 py-2 w-full" />
             </div>
-            <input type="email" placeholder="Email address" className="border rounded px-3 py-2 w-full" />
-            <input type="text" placeholder="Street" className="border rounded px-3 py-2 w-full" />
+            <input required onChange={onChangeHandler} name="email" value={formData.email} type="email" placeholder="Email address" className="border rounded px-3 py-2 w-full" />
+            <input required onChange={onChangeHandler} name="street" value={formData.street} type="text" placeholder="Street" className="border rounded px-3 py-2 w-full" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input type="text" placeholder="City" className="border rounded px-3 py-2 w-full" />
-              <input type="text" placeholder="State" className="border rounded px-3 py-2 w-full" />
+              <input required onChange={onChangeHandler} name="city" value={formData.city} type="text" placeholder="City" className="border rounded px-3 py-2 w-full" />
+              <input required onChange={onChangeHandler} name="state" value={formData.state} type="text" placeholder="State" className="border rounded px-3 py-2 w-full" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input type="text" placeholder="Zipcode" className="border rounded px-3 py-2 w-full" />
-              <input type="text" placeholder="Country" className="border rounded px-3 py-2 w-full" />
+              <input required onChange={onChangeHandler} name="zipcode" value={formData.zipcode} type="text" placeholder="Zipcode" className="border rounded px-3 py-2 w-full" />
+              <input required onChange={onChangeHandler} name="country" value={formData.country} type="text" placeholder="Country" className="border rounded px-3 py-2 w-full" />
             </div>
-            <input type="text" placeholder="Phone" className="border rounded px-3 py-2 w-full" />
-          </form>
+            <input required onChange={onChangeHandler} name="phone" value={formData.phone} type="text" placeholder="Phone" className="border rounded px-3 py-2 w-full" />
+          </div>
         </div>
 
         {/* Cart Totals + Payment */}
@@ -75,13 +126,13 @@ const PlaceOrder = () => {
           </div>
 
           <button
-            onClick={() => navigate('/orders')}
+            type="submit"
             className=" mt-8 bg-black text-white text-sm px-8 py-3 rounded hover:bg-gray-800 transition"
           >
             PLACE ORDER
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
