@@ -9,20 +9,23 @@ const Cart = () => {
   const [cartData, setCartData] = useState([]);
 
   useEffect(() => {
-    const tempData = [];
-    for (const items in cartItems) {
-      for (const item in cartItems[items]) {
-        if (cartItems[items][item] > 0) {
-          tempData.push({
-            _id: items,
-            size: item,
-            quantity: cartItems[items][item],
-          });
+    if (products.length > 0) {
+      const tempData = [];
+      for (const items in cartItems) {
+        for (const item in cartItems[items]) {
+          if (cartItems[items][item] > 0) {
+            tempData.push({
+              _id: items,
+              size: item,
+              quantity: cartItems[items][item],
+            });
+          }
         }
       }
+      setCartData(tempData);
     }
-    setCartData(tempData);
-  }, [cartItems]);
+
+  }, [cartItems, products]);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
@@ -71,10 +74,10 @@ const Cart = () => {
                             e.target.value === "" || e.target.value === "0"
                               ? null
                               : updateQuantity(
-                                  item._id,
-                                  item.size,
-                                  Number(e.target.value)
-                                )
+                                item._id,
+                                item.size,
+                                Number(e.target.value)
+                              )
                           }
                           className="w-20 border rounded px-2 py-1 text-center"
                         />
@@ -123,10 +126,10 @@ const Cart = () => {
                         e.target.value === "" || e.target.value === "0"
                           ? null
                           : updateQuantity(
-                              item._id,
-                              item.size,
-                              Number(e.target.value)
-                            )
+                            item._id,
+                            item.size,
+                            Number(e.target.value)
+                          )
                       }
                       className="w-15 border rounded px-1 text-center mt-2"
                     /></p>
