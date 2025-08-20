@@ -7,7 +7,6 @@ export const ShopContext = createContext()
 
 const ShopContextProvider = (props) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL
-    const [token,setToken] = useState('')
     const [products, setProducts] = useState([])
     const currency = "₹";
     const delivery_fee = 20;
@@ -15,6 +14,11 @@ const ShopContextProvider = (props) => {
     const [showSearch, setShowSearch] = useState(false);
     const [cartItems, setCartItems] = useState({});
     const navigate = useNavigate();
+    const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : '')
+
+    useEffect(()=>{
+        localStorage.setItem('token',token)
+    },[token])
 
     const addToCart = async (itemId, size) => {
         if (!size) {

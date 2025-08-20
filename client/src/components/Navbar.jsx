@@ -1,13 +1,11 @@
 import React, { useContext, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
-import { assets } from "../assets/assets.js";
 import { ShopContext } from "../context/ShopContext.jsx";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { setShowSearch, getCartCount } = useContext(ShopContext);
-  const navigate = useNavigate()
+  const { setShowSearch, getCartCount, navigate, token, setToken, setCartItems } = useContext(ShopContext);
 
   const navLinks = [
     { name: "HOME", path: "/" },
@@ -15,6 +13,14 @@ const Navbar = () => {
     { name: "ABOUT", path: "/about" },
     { name: "CONTACT", path: "/contact" },
   ];
+
+  const logout = () => {
+    navigate('/login')
+    localStorage.removeItem('token')
+    setToken('')
+    setCartItems({})
+  }
+
 
   return (
     <nav className="sticky top-0 left-0 z-50 shadow-lg bg-gradient-to-r from-sky-200 via-sky-300 to-sky-400 text-black">
@@ -60,10 +66,10 @@ const Navbar = () => {
 
           {/* Profile Dropdown */}
           <div className="group relative">
-            <Link to={"/login"} className="text-gray-700 hover:text-blue-600">
-                <User size={22} />
-            </Link>
-            <div className="group-hover:block hidden absolute right-0 top-5 w-45 bg-white shadow-lg rounded-lg py-2">
+            <button onClick={() => token ? null : navigate('login')} className="text-gray-700 hover:text-blue-600">
+              <User size={22} />
+            </button>
+            {token && <div className="group-hover:block hidden absolute right-0 top-5 w-45 bg-white shadow-lg rounded-lg py-2">
               <Link
                 to="/profile"
                 className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
@@ -77,11 +83,12 @@ const Navbar = () => {
                 Orders
               </Link>
               <button
+                onClick={logout}
                 className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
               >
                 Logout
               </button>
-            </div>
+            </div>}
           </div>
 
           {/* Mobile Menu Button */}

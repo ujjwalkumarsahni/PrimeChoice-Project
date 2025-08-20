@@ -1,211 +1,140 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ShopContext } from "../context/ShopContext.jsx";
 
 const Login = () => {
-  const [currentState, setCurrentState] = useState("Sign Up"); // "Sign Up" | "Log In" | "Forgot"
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
-  const [showPwd, setShowPwd] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [currentState, setCurrentState] = useState("Sign Up");
+  const { token, setToken, backendUrl, navigate } = useContext(ShopContext);
 
-  const isSignup = currentState === "Sign Up";
-  const isLogin = currentState === "Log In";
-  const isForgot = currentState === "Forgot";
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-  };
-
-  const validate = () => {
-    const e = {};
-    if (isSignup && !form.name.trim()) e.name = "Name is required.";
-    if (!form.email.trim()) e.email = "Email is required.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      e.email = "Enter a valid email.";
-    if (!isForgot) {
-      if (!form.password) e.password = "Password is required.";
-      else if (form.password.length < 6) e.password = "Min 6 characters.";
-    }
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  const handleSubmit = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
-
-    if (isForgot) {
-      console.log("Send reset link to:", form.email);
-      alert("Password reset link sent to your email!");
-      setCurrentState("Log In");
-      return;
+    try {
+      if (currentState === "Sign Up") {
+        const response = await axios.post(`${backendUrl}/api/user/register`, {
+          name,
+          email,
+          password,
+        });
+        if (response.data.success) {
+          setToken(response.data.token);
+          toast.success("Account created successfully!");
+        } else {
+          toast.error(response.data.message);
+        }
+      } else {
+        const response = await axios.post(`${backendUrl}/api/user/login`, {
+          email,
+          password,
+        });
+        if (response.data.success) {
+          setToken(response.data.token);
+          toast.success("Login successful!");
+        } else {
+          toast.error(response.data.message);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
     }
-
-    // Replace with your auth logic
-    console.log(`${currentState} with:`, form);
-    alert(`${currentState} successful!`);
   };
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token]);
+
+  
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl p-6 sm:p-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2">
-          {isSignup
-            ? "Create an account"
-            : isLogin
-            ? "Welcome back"
-            : "Reset your password"}
-        </h1>
-        <p className="text-center text-gray-600 mb-6">
-          {isSignup
-            ? "Sign up to get started"
-            : isLogin
-            ? "Log in to continue"
-            : "Enter your email to reset password"}
-        </p>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 md:p-8">
+        <h2 className="text-2xl md:text-3xl font-semibold text-center mb-6">
+          {currentState === "Sign Up" ? "Create an Account" : "Welcome Back"}
+        </h2>
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          {isSignup && (
+        <form onSubmit={onSubmitHandler} className="space-y-4">
+          {currentState === "Sign Up" && (
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm font-medium text-gray-700">
                 Name
               </label>
               <input
-                id="name"
-                name="name"
                 type="text"
-                placeholder="Your name"
-                value={form.name}
-                onChange={handleChange}
-                className={`mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.name ? "border-red-400" : "border-gray-300"
-                }`}
+                placeholder="Enter your name"
+                className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
               />
-              {errors.name && (
-                <p className="mt-1 text-xs text-red-500">{errors.name}</p>
-              )}
             </div>
           )}
 
-          {/* Email */}
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
-              id="email"
-              name="email"
               type="email"
-              placeholder="you@example.com"
-              value={form.email}
-              onChange={handleChange}
-              className={`mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.email ? "border-red-400" : "border-gray-300"
-              }`}
+              placeholder="Enter your email"
+              className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-            )}
           </div>
 
-          {/* Password (hidden in forgot mode) */}
-          {!isForgot && (
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <div
-                className={`mt-1 flex items-center rounded-xl border px-3 focus-within:ring-2 focus-within:ring-blue-500 ${
-                  errors.password ? "border-red-400" : "border-gray-300"
-                }`}
-              >
-                <input
-                  id="password"
-                  name="password"
-                  type={showPwd ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={handleChange}
-                  className="w-full py-2 outline-none bg-transparent"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPwd((s) => !s)}
-                  className="text-sm text-blue-600 hover:underline ml-2"
-                  aria-label={showPwd ? "Hide password" : "Show password"}
-                >
-                  {showPwd ? "Hide" : "Show"}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-xs text-red-500">{errors.password}</p>
-              )}
-            </div>
-          )}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
           <button
             type="submit"
-            className="w-full py-2.5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+            className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition"
           >
-            {isSignup
-              ? "Sign Up"
-              : isLogin
-              ? "Log In"
-              : "Send Reset Link"}
+            {currentState === "Sign Up" ? "Sign Up" : "Login"}
           </button>
         </form>
 
-        {/* Links */}
-        <div className="mt-6 text-center text-sm space-y-2">
-          {isLogin && (
-            <button
-              className="text-blue-600 font-medium hover:underline"
-              onClick={() => setCurrentState("Forgot")}
-            >
-              Forgot your password?
-            </button>
-          )}
-
-          {isSignup ? (
-            <p>
+        <p className="text-center text-gray-600 mt-6 text-sm md:text-base">
+          {currentState === "Sign Up" ? (
+            <>
               Already have an account?{" "}
               <button
-                className="text-blue-600 font-medium hover:underline"
-                onClick={() => setCurrentState("Log In")}
+                onClick={() => setCurrentState("Login")}
+                className="text-blue-600 font-semibold hover:underline"
               >
-                Log In
+                Login
               </button>
-            </p>
-          ) : isLogin ? (
-            <p>
+            </>
+          ) : (
+            <>
               Don’t have an account?{" "}
               <button
-                className="text-blue-600 font-medium hover:underline"
                 onClick={() => setCurrentState("Sign Up")}
+                className="text-blue-600 font-semibold hover:underline"
               >
                 Sign Up
               </button>
-            </p>
-          ) : (
-            <p>
-              Remember your password?{" "}
-              <button
-                className="text-blue-600 font-medium hover:underline"
-                onClick={() => setCurrentState("Log In")}
-              >
-                Log In
-              </button>
-            </p>
+            </>
           )}
-        </div>
+        </p>
       </div>
     </div>
   );
