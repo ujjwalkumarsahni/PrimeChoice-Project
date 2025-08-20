@@ -7,6 +7,21 @@ import { ShopContext } from "../context/ShopContext.jsx";
 const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
   const { navigate } = useContext(ShopContext)
+  const [formData,setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    street: '',
+    city: '',
+    state: '',
+    zipcode: '',
+    country: '',
+    phone: ''
+  })
+
+  const onChangeHandler = (event) =>{
+    
+  }
 
   return (
     <div className="px-4 sm:px-8 py-8">
