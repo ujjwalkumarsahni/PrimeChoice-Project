@@ -21,6 +21,44 @@ const PlaceOrder = () => {
     phone: ''
   })
 
+  const initPay = async (order) => {
+    if (!window.Razorpay) {
+      toast.error("Razorpay SDK not loaded");
+      return;
+    }
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "Order Payment",
+      description: "Order Payment",
+      order_id: order.id,
+      receipt: order.receipt,
+      handler: async (response) => {
+        try {
+          const { data } = await axios.post(`${backendUrl}/api/order/verifyRazorpay`, response, { headers: { token } });
+
+          if (data.success) {
+            navigate('/orders');
+            setCartItems({})
+            toast.success(data.message);
+          } else {
+            toast.error(data.message || "Payment verification failed");
+          }
+        } catch (error) {
+          toast.error(error.message);
+        }
+      },
+      theme: {
+        color: "#6a11cb"
+      }
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
   const onChangeHandler = (event) => {
     const name = event.target.name
     const value = event.target.value
@@ -44,7 +82,7 @@ const PlaceOrder = () => {
           }
         }
       }
-      
+
       let orderData = {
         address: formData,
         items: orderItems,
@@ -55,28 +93,36 @@ const PlaceOrder = () => {
 
         // api calls for COD
         case 'cod':
-            const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {headers: {token}})
-            if(response.data.success){
-              setCartItems({})
-              navigate('/orders')
-            } else{
-              toast.error(response.data.message)
-            }
+          const response = await axios.post(`${backendUrl}/api/order/place`, orderData, { headers: { token } })
+          if (response.data.success) {
+            setCartItems({})
+            navigate('/orders')
+          } else {
+            toast.error(response.data.message)
+          }
           break;
         case 'stripe':
-            const responseStripe = await axios.post(`${backendUrl}/api/order/stripe`, orderData, {headers: {token}})
-            if(responseStripe.data.success){
-              const {session_url} = responseStripe.data
-              window.location.replace(session_url)
-            } else{
-              toast.error(responseStripe.data.message)
-            }
+          const responseStripe = await axios.post(`${backendUrl}/api/order/stripe`, orderData, { headers: { token } })
+          if (responseStripe.data.success) {
+            const { session_url } = responseStripe.data
+            window.location.replace(session_url)
+          } else {
+            toast.error(responseStripe.data.message)
+          }
           break;
-      
+        case 'razorpay':
+          const responserazorpay = await axios.post(`${backendUrl}/api/order/razorpay`, orderData, { headers: { token } })
+          if (responserazorpay.data.success) {
+            initPay(responserazorpay.data.order)
+          } else {
+            toast.error(responserazorpay.data.message)
+          }
+          break;
+
         default:
           break;
       }
-      
+
     } catch (error) {
       console.log(error);
       toast.error(error.message)
