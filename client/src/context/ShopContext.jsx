@@ -22,20 +22,23 @@ const ShopContextProvider = (props) => {
     }, [token])
 
     const addToCart = async (itemId, size) => {
+        if (!token) {
+            toast.error("Please login to add items to cart", { autoClose: 1000 });
+            return;
+        }
         if (!size) {
             toast.error("Please select a size", { autoClose: 1000 });
             return;
         }
+
         let cartData = structuredClone(cartItems);
         if (cartData[itemId]) {
             if (cartData[itemId][size]) {
                 cartData[itemId][size] += 1;
-            }
-            else {
+            } else {
                 cartData[itemId][size] = 1;
             }
-        }
-        else {
+        } else {
             cartData[itemId] = {};
             cartData[itemId][size] = 1;
         }
@@ -43,16 +46,14 @@ const ShopContextProvider = (props) => {
         setCartItems(cartData);
         toast.success("Item added to cart", { autoClose: 500 });
 
-        if (token) {
-            try {
-                await axios.post(`${backendUrl}/api/cart/add`, { itemId, size }, { headers: { token } })
-
-            } catch (error) {
-                console.log(error);
-                toast.error(error.message)
-            }
+        try {
+            await axios.post(`${backendUrl}/api/cart/add`, { itemId, size }, { headers: { token } });
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message, { autoClose: 500 });
         }
-    }
+    };
+
 
     const getCartCount = () => {
         let totalCount = 0;
@@ -72,22 +73,24 @@ const ShopContextProvider = (props) => {
 
 
     const updateQuantity = async (itemId, size, quantity) => {
+        if (!token) {
+            toast.error("Please login to update cart", { autoClose: 1000 });
+            return;
+        }
         let cartData = structuredClone(cartItems);
         cartData[itemId][size] = quantity;
 
         setCartItems(cartData);
         toast.success("Cart updated", { autoClose: 500 });
 
-        if (token) {
-            try {
-                await axios.post(`${backendUrl}/api/cart/update`, { itemId, size, quantity }, { headers: { token } })
-
-            } catch (error) {
-                console.log(error);
-                toast.error(error.message)
-            }
+        try {
+            await axios.post(`${backendUrl}/api/cart/update`, { itemId, size, quantity }, { headers: { token } });
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message);
         }
-    }
+    };
+
 
     const getUserCart = async (token) => {
         try {
@@ -97,7 +100,7 @@ const ShopContextProvider = (props) => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message)
+            toast.error(error.message, { autoClose: 1000 })
         }
     }
 
@@ -137,11 +140,11 @@ const ShopContextProvider = (props) => {
             if (res.data.success) {
                 setProducts(res.data.products);
             } else {
-                toast.error(res.data.message)
+                toast.error(res.data.message, { autoClose: 1000 })
             }
         } catch (err) {
             console.error("Error fetching products:", err);
-            toast.error(err.message)
+            toast.error(err.message, { autoClose: 1000 })
         }
     }
 

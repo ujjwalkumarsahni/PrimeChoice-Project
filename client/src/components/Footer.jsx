@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from "react-router-dom";
 const Footer = () => {
     return (
         <footer className=" text-gray-800 border-t border-gray-200">
@@ -19,10 +19,10 @@ const Footer = () => {
                 <div>
                     <h2 className="font-semibold text-lg mb-4">COMPANY</h2>
                     <ul className="space-y-2 text-gray-600">
-                        <li><a href="#" className="hover:text-gray-900 transition">Home</a></li>
-                        <li><a href="#" className="hover:text-gray-900 transition">About us</a></li>
-                        <li><a href="#" className="hover:text-gray-900 transition">Delivery</a></li>
-                        <li><a href="#" className="hover:text-gray-900 transition">Privacy policy</a></li>
+                        <li><Link to="/" className="hover:text-gray-900 transition">Home</Link></li>
+                        <li><Link to="/about" className="hover:text-gray-900 transition">About us</Link></li>
+                        <li><Link to="/orders" className="hover:text-gray-900 transition">Delivery</Link></li>
+                        <li><Link to="/contact" className="hover:text-gray-900 transition">Privacy policy</Link></li>
                     </ul>
                 </div>
 
@@ -30,9 +30,8 @@ const Footer = () => {
                 <div>
                     <h2 className="font-semibold text-lg mb-4">GET IN TOUCH</h2>
                     <ul className="space-y-2 text-gray-600">
-                        <li>+1-000-000-0000</li>
+                        <li>+91-960-848-3662</li>
                         <li>primechoice@gmail.com</li>
-                        <li>Instagram</li>
                     </ul>
                 </div>
             </div>
