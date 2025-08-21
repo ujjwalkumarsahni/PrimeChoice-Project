@@ -15,6 +15,9 @@ import Footer from './components/Footer.jsx'
 import Searchbar from './components/Searchbar.jsx'
 import Verify from './pages/Verify.jsx';
 import Profile from './pages/Profile.jsx';
+// import ForgotPassword from './pages/ForgotPassword.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
 
 const App = () => {
   return (
@@ -30,6 +33,8 @@ const App = () => {
         <Route path="/product/:productId" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/verify" element={<Verify />} />

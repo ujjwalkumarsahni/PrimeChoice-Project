@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ShopContext } from "../context/ShopContext.jsx";
+import { Eye, EyeOff } from "lucide-react"; // import icons
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Sign Up");
@@ -10,6 +11,7 @@ const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -40,7 +42,7 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -49,8 +51,6 @@ const Login = () => {
       navigate("/");
     }
   }, [token]);
-
-  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
@@ -90,19 +90,37 @@ const Login = () => {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-[38px] text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
+
+          {currentState === "Login" && (
+            <p className="text-right mt-2 text-sm font-medium">
+              <button
+                onClick={() => navigate("/forgot-password")}
+                className="text-blue-600 hover:underline"
+              >
+                Forgot Password?
+              </button>
+            </p>
+          )}
 
           <button
             type="submit"
