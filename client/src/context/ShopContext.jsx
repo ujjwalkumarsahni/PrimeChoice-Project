@@ -22,7 +22,7 @@ const ShopContextProvider = (props) => {
 
     const addToCart = async (itemId, size) => {
         if (!size) {
-            toast.error("Please select a size");
+            toast.error("Please select a size", { autoClose: 1000 });
             return;
         }
         let cartData = structuredClone(cartItems);
@@ -40,6 +40,7 @@ const ShopContextProvider = (props) => {
         }
 
         setCartItems(cartData);
+        toast.success("Item added to cart" ,{ autoClose: 500 });
 
         if (token) {
             try {
@@ -74,6 +75,7 @@ const ShopContextProvider = (props) => {
         cartData[itemId][size] = quantity;
 
         setCartItems(cartData);
+         toast.success("Cart updated", { autoClose: 500 });
 
         if (token) {
             try {
