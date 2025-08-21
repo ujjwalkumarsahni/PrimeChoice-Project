@@ -93,3 +93,23 @@ export const adminLogin = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
+// Get user profile
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+
+    const userData = await userModel.findById(userId).select("-password"); // exclude password
+    if (!userData) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    } 
+    console.log(userData);
+    
+
+    res.status(200).json({ success: true, userData });
+  } catch (error) {
+    console.error("Profile error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

@@ -35,7 +35,7 @@ const ProductItem = ({ id, image, name, price }) => {
             </span>
           </div>
         ) : (
-          <p className="text-gray-700 text-xs">
+          <p className="text-gray-700 text-sm font-medium">
             {currency}{price.toFixed(2)}
           </p>
         )}

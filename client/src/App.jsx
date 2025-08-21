@@ -14,6 +14,7 @@ import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import Searchbar from './components/Searchbar.jsx'
 import Verify from './pages/Verify.jsx';
+import Profile from './pages/Profile.jsx';
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/verify" element={<Verify />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       <Footer />
     </div>
