@@ -6,36 +6,46 @@ import axios from "axios";
 
 const Orders = () => {
   const { backendUrl, token, currency } = useContext(ShopContext);
-  const [orderData, setOrderData] = useState([])
+  const [orderData, setOrderData] = useState([]);
 
   const loadOrderData = async () => {
     try {
-      if (!token) {
-        return null
-      }
-      const response = await axios.post(`${backendUrl}/api/order/userorders`, {}, { headers: { token } })
+      if (!token) return;
+
+      const response = await axios.post(
+        `${backendUrl}/api/order/userorders`,
+        {},
+        { headers: { token } }
+      );
+
       if (response.data.success) {
-        let allOrdersItem = []
-        response.data.orders.map((order) => {
-          order.items.map((item) => {
-            item['status'] = order.status
-            item['payment'] = order.payment
-            item['paymentMethod'] = order.paymentMethod
-            item['date'] = order.date
-            allOrdersItem.push(item)
-          })
-        })
-        setOrderData(allOrdersItem.reverse())
+        let allOrdersItem = [];
+
+        response.data.orders.forEach((order) => {
+          order.items.forEach((item) => {
+            allOrdersItem.push({
+              ...item,
+              status: order.status,
+              payment: order.payment,
+              paymentMethod: order.paymentMethod,
+              date: order.date,
+              orderAmount: order.amount,
+            });
+          });
+        });
+
+        setOrderData(allOrdersItem.reverse());
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message)
+      toast.error(error.message);
     }
-  }
+  };
 
   useEffect(() => {
-    loadOrderData()
-  }, [token])
+    loadOrderData();
+  }, [token]);
+
 
   return (
     <div className="px-4 sm:px-8 py-8">
@@ -45,7 +55,7 @@ const Orders = () => {
       </div>
 
       {/* Orders list */}
-      <div className="grid gap-6 ">
+      <div className="grid gap-6">
         {orderData.map((item, index) => (
           <div
             key={index}
@@ -61,15 +71,18 @@ const Orders = () => {
               <div className="flex-1">
                 <p className="font-semibold text-lg">{item.name}</p>
                 <div className="text-sm text-gray-600 space-y-1 mt-1">
-                  <p>
-                    {currency}
-                    {item.price}
+                  <p className="font-medium text-blue-600">
+                    Delivery Fee + Item: {currency}
+                    {item.orderAmount}
                   </p>
                   <p>Quantity: {item.quantity}</p>
                   <p>Size: {item.size}</p>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  Date: <span className="font-medium">{new Date(item.date).toDateString()}</span>
+                  Date:{" "}
+                  <span className="font-medium">
+                    {new Date(item.date).toDateString()}
+                  </span>
                 </p>
                 <p className="text-xs text-gray-500 mt-2">
                   Payment: <span className="font-medium">{item.paymentMethod}</span>
@@ -83,7 +96,10 @@ const Orders = () => {
                 <span className="w-2 h-2 rounded-full bg-green-500"></span>
                 <p className="text-sm text-gray-700">{item.status}</p>
               </div>
-              <button onClick={loadOrderData} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+              <button
+                onClick={loadOrderData}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
                 Track Order
               </button>
             </div>
