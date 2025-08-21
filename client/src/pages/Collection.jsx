@@ -3,9 +3,10 @@ import { ShopContext } from '../context/ShopContext.jsx';
 import { assets } from '../assets/assets.js';
 import { Title } from '../components/Title.jsx';
 import ProductItem from '../components/ProductItem.jsx';
+import ShimmerCard from '../components/ShimmerCard.jsx';
 
 const Collection = () => {
-  const { products,search,showSearch } = useContext(ShopContext);
+  const { products, search, showSearch } = useContext(ShopContext);
   const [showFilters, setShowFilters] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
   const [category, setCategory] = useState([]);
@@ -31,7 +32,7 @@ const Collection = () => {
   const applyFilters = () => {
     let productCopy = products.slice();
 
-    if(showSearch && search) {
+    if (showSearch && search) {
       productCopy = productCopy.filter(product =>
         product.name.toLowerCase().includes(search.toLowerCase())
       );
@@ -65,7 +66,7 @@ const Collection = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [category, subCategory,showSearch, search,products]);
+  }, [category, subCategory, showSearch, search, products]);
 
   useEffect(() => {
     sortProducts();
@@ -74,18 +75,18 @@ const Collection = () => {
   return (
     <div className="px-4 sm:px-8 py-6">
       <div className="flex flex-col sm:flex-row gap-6">
-        
+
         {/* Filter Section */}
         <div className="sm:w-1/4 bg-gray-50 p-4 rounded-lg shadow-sm">
-          <div 
+          <div
             className="flex items-center justify-between cursor-pointer sm:cursor-default"
             onClick={() => setShowFilters(!showFilters)}
           >
             <p className="font-semibold text-lg">Filters</p>
-            <img 
-              className={`h-3 sm:hidden transition-transform duration-300 ${showFilters ? 'rotate-90' : ''}`} 
-              src={assets.dropdown_icon} 
-              alt="dropdown" 
+            <img
+              className={`h-3 sm:hidden transition-transform duration-300 ${showFilters ? 'rotate-90' : ''}`}
+              src={assets.dropdown_icon}
+              alt="dropdown"
             />
           </div>
 
@@ -125,8 +126,8 @@ const Collection = () => {
         {/* Product Section */}
         <div className="sm:w-3/4">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
-            <Title text1="ALL" text2="COLLECTION" textSize={'text-xl'}/>
-            <select 
+            <Title text1="ALL" text2="COLLECTION" textSize={'text-xl'} />
+            <select
               className="border rounded-lg px-3 py-1 text-sm"
               onChange={(e) => setSortType(e.target.value)}
             >
@@ -138,15 +139,18 @@ const Collection = () => {
 
           {/* Products Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filterProducts.map((item, index) => (
-              <ProductItem
-                key={index}
-                id={item._id}
-                image={item.image}
-                name={item.name}
-                price={item.price}
-              />
-            ))}
+            {filterProducts.length > 0
+              ? filterProducts.map((item, index) => (
+                <ProductItem
+                  key={index}
+                  id={item._id}
+                  image={item.image}
+                  name={item.name}
+                  price={item.price}
+                />
+              ))
+              : // 👇 Jab tak products load ho rahe hai tab tak shimmer dikhana
+              Array.from({ length: 8 }).map((_, i) => <ShimmerCard key={i} />)}
           </div>
         </div>
       </div>

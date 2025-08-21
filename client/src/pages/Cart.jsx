@@ -3,7 +3,7 @@ import { ShopContext } from "../context/ShopContext.jsx";
 import { Title } from "../components/Title.jsx";
 import { assets } from "../assets/assets.js";
 import CartTotal from "../components/CartTotal.jsx";
-
+import { ShoppingCart } from "lucide-react";
 const Cart = () => {
   const { products, cartItems, updateQuantity, navigate } = useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
@@ -164,7 +164,24 @@ const Cart = () => {
           </div>
         </div>
       ) : (
-        <p className="text-center text-gray-500">Your cart is empty.</p>
+        <>
+          {cartData.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 px-6 bg-gray-50 rounded-2xl shadow-inner">
+              <ShoppingCart className="w-20 h-20 text-gray-300 mb-4" />
+              <h2 className="text-2xl font-semibold text-gray-700 mb-2">Your cart is empty</h2>
+              <p className="text-gray-500 text-center mb-6">
+                Looks like you haven’t added anything yet.<br />
+                Let’s find something you’ll love!
+              </p>
+              <button
+                onClick={() => navigate("/")}
+                className="bg-sky-600 text-white px-6 py-3 rounded-full shadow hover:bg-sky-700 transition"
+              >
+                🛍 Continue Shopping
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
