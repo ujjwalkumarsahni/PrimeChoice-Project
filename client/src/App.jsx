@@ -18,6 +18,7 @@ import Profile from './pages/Profile.jsx';
 // import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
+import TrackOrder from './pages/TrackOrder.jsx';
 
 const App = () => {
   return (
@@ -39,6 +40,8 @@ const App = () => {
         <Route path="/orders" element={<Orders />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/track/:orderId" element={<TrackOrder />} />
+
       </Routes>
       <Footer />
     </div>

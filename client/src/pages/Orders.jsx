@@ -26,6 +26,7 @@ const Orders = () => {
           order.items.forEach((item) => {
             allOrdersItem.push({
               ...item,
+              orderId: order._id,
               status: order.status,
               payment: order.payment,
               paymentMethod: order.paymentMethod,
@@ -111,7 +112,7 @@ const Orders = () => {
                   <p className="text-sm text-gray-700">{item.status}</p>
                 </div>
                 <button
-                  onClick={loadOrderData}
+                  onClick={() => navigate(`/track/${item.orderId || item._id || ""}`)}
                   className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                 >
                   Track Order

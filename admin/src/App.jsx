@@ -10,6 +10,7 @@ import AddProduct from './pages/AddProduct.jsx';
 import AllProductList from './pages/AllProductList.jsx';
 import Orders from './pages/Orders.jsx';
 import { AppContext } from './context/AppContext.jsx';
+import DriverTracker from './pages/DriverTracker.jsx';
 
 const App = () => {
   const { token } = useContext(AppContext)
@@ -49,6 +50,7 @@ const App = () => {
               <Route path='/orders' element={<Orders />} />
               <Route path='/list' element={<AllProductList />} />
               <Route path='/add' element={<AddProduct />} />
+              <Route path='/driver-tracker' element={<DriverTracker />} />
             </Routes>
           </div>
         </>}
