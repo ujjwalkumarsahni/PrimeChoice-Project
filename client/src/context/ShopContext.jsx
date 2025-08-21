@@ -15,6 +15,7 @@ const ShopContextProvider = (props) => {
     const [cartItems, setCartItems] = useState({});
     const navigate = useNavigate();
     const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : '')
+    const [hasDiscount, setHasDiscount] = useState(false);
 
     useEffect(() => {
         localStorage.setItem('token', token)
@@ -40,7 +41,7 @@ const ShopContextProvider = (props) => {
         }
 
         setCartItems(cartData);
-        toast.success("Item added to cart" ,{ autoClose: 500 });
+        toast.success("Item added to cart", { autoClose: 500 });
 
         if (token) {
             try {
@@ -54,20 +55,20 @@ const ShopContextProvider = (props) => {
     }
 
     const getCartCount = () => {
-    let totalCount = 0;
-    for (const items in cartItems) {
-        for (const size in cartItems[items]) {
-            try {
-                if (cartItems[items][size] > 0) {
-                    totalCount += cartItems[items][size];
+        let totalCount = 0;
+        for (const items in cartItems) {
+            for (const size in cartItems[items]) {
+                try {
+                    if (cartItems[items][size] > 0) {
+                        totalCount += cartItems[items][size];
+                    }
+                } catch (error) {
+                    console.error("Error calculating cart count:", error);
                 }
-            } catch (error) {
-                console.error("Error calculating cart count:", error);
             }
         }
-    }
-    return totalCount; 
-};
+        return totalCount;
+    };
 
 
     const updateQuantity = async (itemId, size, quantity) => {
@@ -75,7 +76,7 @@ const ShopContextProvider = (props) => {
         cartData[itemId][size] = quantity;
 
         setCartItems(cartData);
-         toast.success("Cart updated", { autoClose: 500 });
+        toast.success("Cart updated", { autoClose: 500 });
 
         if (token) {
             try {
@@ -90,8 +91,8 @@ const ShopContextProvider = (props) => {
 
     const getUserCart = async (token) => {
         try {
-           const response =  await axios.post(`${backendUrl}/api/cart/get`, {}, { headers: { token } })
-            if(response.data.success){
+            const response = await axios.post(`${backendUrl}/api/cart/get`, {}, { headers: { token } })
+            if (response.data.success) {
                 setCartItems(response.data.cartData)
             }
         } catch (error) {
@@ -100,29 +101,35 @@ const ShopContextProvider = (props) => {
         }
     }
 
-    useEffect(()=>{
-        if(token){
+    useEffect(() => {
+        if (token) {
             getUserCart(token)
         }
-    },[token])
+    }, [token])
 
-
-    const getCartAmount = () => {
+    const getCartAmount = (applyDiscount = false) => {
         let totalAmount = 0;
         for (const items in cartItems) {
             let itemInfo = products.find((p) => p._id === items);
+            if (!itemInfo) continue;
+
             for (const item in cartItems[items]) {
                 try {
                     if (cartItems[items][item] > 0) {
-                        totalAmount += itemInfo.price * cartItems[items][item];
+                        let price = applyDiscount && hasDiscount
+                            ? parseFloat(getFinalPrice(itemInfo.price))  // discounted
+                            : itemInfo.price;                           // original
+
+                        totalAmount += price * cartItems[items][item];
                     }
                 } catch (error) {
-
+                    console.error("Error calculating cart amount:", error);
                 }
             }
         }
-        return totalAmount
-    }
+        return totalAmount;
+    };
+
 
     const getProductData = async () => {
         try {
@@ -143,12 +150,47 @@ const ShopContextProvider = (props) => {
     }, [])
 
 
+    // ✅ discounted price function fix
+    const getFinalPrice = (price) => {
+        return hasDiscount ? (price * 0.95).toFixed(2) : price.toFixed(2);
+    };
+
+    // ✅ check discount status from backend
+    useEffect(() => {
+        const fetchDiscount = async () => {
+            if (!token) return; // agar user login nahi hai to skip
+
+            try {
+                const res = await axios.post(
+                    `${backendUrl}/api/newsletter/status`,
+                    {}, // body empty rakho
+                    { headers: { token } }
+                );
+
+                if (res.data.success) {
+                    setHasDiscount(res.data.hasDiscount);
+                } else {
+                    console.log("Discount status error:", res.data.message);
+                    setHasDiscount(false);
+                }
+            } catch (err) {
+                console.error("Error fetching discount status:", err);
+                setHasDiscount(false);
+            }
+        };
+
+        fetchDiscount();
+    }, [token]);
+
+
     const value = {
         backendUrl,
         products, currency, delivery_fee,
         search, setSearch, showSearch, setShowSearch,
         cartItems, setCartItems, addToCart, getCartCount, updateQuantity, getCartAmount,
-        navigate, token, setToken
+        navigate, token, setToken,
+        hasDiscount, setHasDiscount,
+        getFinalPrice,
     }
 
     return (

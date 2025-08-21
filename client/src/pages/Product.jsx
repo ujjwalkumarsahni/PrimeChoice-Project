@@ -6,7 +6,7 @@ import RelatedProduct from '../components/RelatedProduct.jsx';
 
 const Product = () => {
   const { productId } = useParams();
-  const { products, currency ,addToCart} = useContext(ShopContext);
+  const { products, currency, addToCart, hasDiscount, getFinalPrice } = useContext(ShopContext);
   const [productData, setProductData] = useState(null);
   const [image, setImage] = useState('');
   const [size, setSize] = useState('');
@@ -28,7 +28,7 @@ const Product = () => {
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Product details layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
+
         {/* Left: Product images */}
         <div className="flex flex-col-reverse sm:flex-row gap-4">
           {/* Thumbnail images */}
@@ -57,7 +57,7 @@ const Product = () => {
         {/* Right: Product info */}
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-bold">{productData.name}</h1>
-          
+
           {/* Rating */}
           <div className="flex items-center gap-1">
             {[...Array(4)].map((_, i) => (
@@ -68,9 +68,26 @@ const Product = () => {
           </div>
 
           {/* Price */}
-          <p className="text-2xl font-semibold text-blue-600">
-            {currency}{productData.price}
-          </p>
+          <div className="flex items-center gap-3">
+            {hasDiscount ? (
+              <>
+                <p className="text-xl text-gray-500 line-through">
+                  {currency}{productData.price.toFixed(2)}
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  {currency}{getFinalPrice(productData.price)}
+                </p>
+                <span className="bg-green-100 text-green-700 text-sm font-medium px-2 py-1 rounded">
+                  5% OFF
+                </span>
+              </>
+            ) : (
+              <p className="text-2xl font-semibold text-blue-600">
+                {currency}{productData.price.toFixed(2)}
+              </p>
+            )}
+          </div>
+
 
           {/* Description */}
           <p className="text-gray-700 leading-relaxed">{productData.description}</p>
@@ -83,11 +100,10 @@ const Product = () => {
                 <button
                   key={index}
                   onClick={() => setSize(item)}
-                  className={`px-4 py-2 border rounded-lg transition ${
-                    item === size
+                  className={`px-4 py-2 border rounded-lg transition ${item === size
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-300 hover:border-blue-400'
-                  }`}
+                    }`}
                 >
                   {item}
                 </button>
@@ -96,7 +112,7 @@ const Product = () => {
           </div>
 
           {/* Add to cart */}
-          <button onClick={() => addToCart(productData._id,size)} className="mt-4 w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+          <button onClick={() => addToCart(productData._id, size)} className="mt-4 w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
             ADD TO CART
           </button>
 
