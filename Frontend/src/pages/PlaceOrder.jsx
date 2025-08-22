@@ -59,6 +59,50 @@ const PlaceOrder = () => {
     rzp.open();
   };
 
+  const validateForm = () => {
+    if (!formData.firstName || formData.firstName.length < 3) {
+      toast.error("First name must be at least 2 characters");
+      return false;
+    }
+    if (!formData.lastName || formData.lastName.length < 3) {
+      toast.error("Last name must be at least 2 characters");
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Enter a valid email");
+      return false;
+    }
+    if (!formData.street || formData.street.length < 3) {
+      toast.error("Street must be at least 3 characters");
+      return false;
+    }
+    if (!formData.city || formData.city.length < 3) {
+      toast.error("Enter a valid city");
+      return false;
+    }
+    if (!formData.state || formData.state.length < 3) {
+      toast.error("Enter a valid state");
+      return false;
+    }
+    const zipRegex = /^[0-9]{4,6}$/;
+    if (!zipRegex.test(formData.zipcode)) {
+      toast.error("Enter a valid zipcode (4–6 digits)");
+      return false;
+    }
+    if (!formData.country || formData.country.length < 2) {
+      toast.error("Enter a valid country");
+      return false;
+    }
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      toast.error("Enter a valid 10-digit phone number");
+      return false;
+    }
+    return true;
+  };
+
+
   const onChangeHandler = (event) => {
     const name = event.target.name
     const value = event.target.value
@@ -68,6 +112,9 @@ const PlaceOrder = () => {
 
   const onsubmitHandler = async (e) => {
     e.preventDefault()
+
+    if (!validateForm()) return;
+
     try {
       let orderItems = []
       for (const items in cartItems) {

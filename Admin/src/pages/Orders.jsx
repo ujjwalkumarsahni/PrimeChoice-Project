@@ -46,6 +46,7 @@ const Orders = () => {
         { orderId, status: event.target.value },
         { headers: { token } }
       );
+
       if (response.data.success) {
         await fetchAllOrders();
         toast.success("Order status updated!");
@@ -128,8 +129,10 @@ const Orders = () => {
                     </label>
                     <select
                       className="border rounded-lg px-3 py-1 text-sm bg-gray-50 dark:bg-gray-700 dark:text-white"
-                      value={order.status}
-                      onChange={(event) => updateStatus(event, order._id)}
+                      defaultValue={order.status}   
+                      onChange={(event) => {
+                        updateStatus(event, order._id);
+                      }}
                     >
                       <option value="Order Placed">Order Placed</option>
                       <option value="Packing">Packing</option>
@@ -208,9 +211,8 @@ const Orders = () => {
                   <p>
                     Status:{" "}
                     <span
-                      className={`font-medium ${
-                        order.payment ? "text-green-600" : "text-red-600"
-                      }`}
+                      className={`font-medium ${order.payment ? "text-green-600" : "text-red-600"
+                        }`}
                     >
                       {order.payment ? "Paid" : "Pending"}
                     </span>

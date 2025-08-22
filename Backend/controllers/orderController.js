@@ -252,6 +252,10 @@ export const userOrders = async (req, res) => {
 export const updateOrders = async (req, res) => {
     try {
         const { orderId, status } = req.body
+        if(status === "Delivered"){
+            await orderModel.findByIdAndUpdate(orderId, {payment: true})
+        }
+        
         await orderModel.findByIdAndUpdate(orderId, { status })
         res.json({ success: true, message: "Status Updated" })
     } catch (error) {
