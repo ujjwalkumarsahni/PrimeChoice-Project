@@ -96,6 +96,7 @@ const PlaceOrder = () => {
           const response = await axios.post(`${backendUrl}/api/order/place`, orderData, { headers: { token } })
           if (response.data.success) {
             setCartItems({})
+            toast.success(response.data.message)
             navigate('/orders')
           } else {
             toast.error(response.data.message)
