@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 const socket = io(import.meta.env.VITE_BACKEND_URL, { transports: ["websocket"] });
@@ -9,7 +9,7 @@ const DriverTracker = () => {
   const [streaming, setStreaming] = useState(false);
 
   const startStreaming = () => {
-    if (!orderId) return alert("Enter orderId");
+    if (!orderId) return alert("Enter Order ID");
     if (!navigator.geolocation) return alert("Geolocation not supported");
 
     const id = navigator.geolocation.watchPosition(

@@ -19,45 +19,56 @@ const TrackOrder = () => {
   const { orderId } = useParams();
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
-  const markerRef = useRef(null);
+  const driverMarker = useRef(null);
   const [coords, setCoords] = useState(null);
 
-  // join socket room
+  // ⚡ Dummy delivery address (backend se fetch karo in real case)
+  const deliveryLocation = { lat: 28.6200, lng: 77.2100 };
+
   useEffect(() => {
     socket.emit("joinOrderRoom", { orderId });
     return () => socket.emit("leaveOrderRoom", { orderId });
   }, [orderId]);
 
-  // listen to updates
   useEffect(() => {
     const handler = (payload) => setCoords(payload);
     socket.on("orderLocation", handler);
     return () => socket.off("orderLocation", handler);
   }, []);
 
-  // init map once
+  // Init Google Map
   useEffect(() => {
     (async () => {
       await loadGoogleMaps(import.meta.env.VITE_GOOGLE_MAPS_KEY);
+
       mapInstance.current = new window.google.maps.Map(mapRef.current, {
-        center: { lat: 28.6139, lng: 77.2090 }, // default Delhi
+        center: deliveryLocation,
         zoom: 14,
-        disableDefaultUI: false,
       });
-      markerRef.current = new window.google.maps.Marker({
+
+      // 🟢 Delivery address marker
+      new window.google.maps.Marker({
         map: mapInstance.current,
-        position: { lat: 28.6139, lng: 77.2090 },
+        position: deliveryLocation,
+        title: "Delivery Address",
+        icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+      });
+
+      // 🟡 Driver marker
+      driverMarker.current = new window.google.maps.Marker({
+        map: mapInstance.current,
+        position: deliveryLocation,
         title: "Delivery Partner",
-        animation: window.google.maps.Animation.DROP,
+        icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
       });
     })();
   }, []);
 
-  // move marker on each update
+  // Move driver marker
   useEffect(() => {
-    if (!coords || !markerRef.current || !mapInstance.current) return;
+    if (!coords || !driverMarker.current || !mapInstance.current) return;
     const pos = { lat: coords.lat, lng: coords.lng };
-    markerRef.current.setPosition(pos);
+    driverMarker.current.setPosition(pos);
     mapInstance.current.panTo(pos);
   }, [coords]);
 
@@ -66,13 +77,15 @@ const TrackOrder = () => {
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl md:text-2xl font-semibold">Tracking Order #{orderId}</h2>
-          <Link to="/orders" className="text-blue-600 hover:underline">Back to Orders</Link>
+          <Link to="/orders" className="text-blue-600 hover:underline">
+            Back to Orders
+          </Link>
         </div>
         <div ref={mapRef} className="w-full h-[60vh] rounded-lg border" />
         <div className="mt-4 text-sm text-gray-600">
           {coords
-            ? <>Live at: <b>{coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}</b> — {new Date(coords.at).toLocaleTimeString()}</>
-            : <>Waiting for delivery partner’s location…</>}
+            ? <>Driver: <b>{coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}</b> — {new Date(coords.at).toLocaleTimeString()}</>
+            : <>Waiting for driver’s location…</>}
         </div>
       </div>
     </div>
