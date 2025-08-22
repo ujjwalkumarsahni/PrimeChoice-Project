@@ -1,18 +1,57 @@
+import { useEffect, useState, useContext } from "react";
 import { ShoppingBag, Package, Users, DollarSign } from "lucide-react";
 import { Title } from "../components/Title.jsx";
+import axios from "axios";
+import { AppContext } from "../context/AppContext.jsx";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
-  const DashboardData = {
-    products: 128,
-    orders: 452,
-    customers: 312,
-    revenue: 12990,
+  const { backendUrl, token } = useContext(AppContext);
+  const [stats, setStats] = useState({
+    products: 0,
+    orders: 0,
+    customers: 0,
+    revenue: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Fetch dashboard data
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${backendUrl}/api/dashboard/stats`, {
+        headers: { token },
+      });
+      if (res.data.success) {
+        setStats(res.data.data);
+      } else {
+        toast.error(res.data.message || "Failed to fetch stats");
+      }
+    } catch (err) {
+      console.error("Error fetching dashboard stats:", err);
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  // Shimmer loader for numbers
+  const ShimmerBox = () => (
+    <div className="w-16 h-8 bg-white/30 rounded animate-pulse"></div>
+  );
 
   return (
     <div className="min-h-screen w-full p-8 bg-gray-100 dark:bg-gray-950">
       {/* Page Title */}
-      <Title text1={"PrimeChoice"} text2={"Dashboard"} textSize={"text-xl md:text-2xl"} />
+      <Title
+        text1={"PrimeChoice"}
+        text2={"Dashboard"}
+        textSize={"text-xl md:text-2xl"}
+      />
 
       {/* Stats Grid */}
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 pt-10">
@@ -22,7 +61,11 @@ const Dashboard = () => {
             <Package className="w-8 h-8" />
           </div>
           <div className="mt-5">
-            <p className="text-3xl font-extrabold">{DashboardData.products}</p>
+            {loading ? (
+              <ShimmerBox />
+            ) : (
+              <p className="text-3xl font-extrabold">{stats.products}</p>
+            )}
             <p className="opacity-80">Products</p>
           </div>
         </div>
@@ -33,7 +76,11 @@ const Dashboard = () => {
             <ShoppingBag className="w-8 h-8" />
           </div>
           <div className="mt-5">
-            <p className="text-3xl font-extrabold">{DashboardData.orders}</p>
+            {loading ? (
+              <ShimmerBox />
+            ) : (
+              <p className="text-3xl font-extrabold">{stats.orders}</p>
+            )}
             <p className="opacity-80">Orders</p>
           </div>
         </div>
@@ -44,7 +91,11 @@ const Dashboard = () => {
             <Users className="w-8 h-8" />
           </div>
           <div className="mt-5">
-            <p className="text-3xl font-extrabold">{DashboardData.customers}</p>
+            {loading ? (
+              <ShimmerBox />
+            ) : (
+              <p className="text-3xl font-extrabold">{stats.customers}</p>
+            )}
             <p className="opacity-80">Customers</p>
           </div>
         </div>
@@ -55,9 +106,13 @@ const Dashboard = () => {
             <DollarSign className="w-8 h-8" />
           </div>
           <div className="mt-5">
-            <p className="text-3xl font-extrabold">
-              ${DashboardData.revenue.toLocaleString()}
-            </p>
+            {loading ? (
+              <ShimmerBox />
+            ) : (
+              <p className="text-3xl font-extrabold">
+                ₹{stats.revenue.toLocaleString("en-IN")}
+              </p>
+            )}
             <p className="opacity-80">Revenue</p>
           </div>
         </div>

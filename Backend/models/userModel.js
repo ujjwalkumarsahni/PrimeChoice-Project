@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
 
     // OTP-based password reset
     resetOtp: { type: String, default: "" },
-    resetOtpExpireAt: { type: Number, default: 0 }, // timestamp in ms
+    resetOtpExpireAt: { type: Number, default: 0 }, 
   },
   {
     timestamps: true, // adds createdAt & updatedAt
@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Avoid recompiling model if already exists (important in Next.js / hot reload)
 const userModel = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default userModel;
