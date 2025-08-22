@@ -25,10 +25,10 @@ const Contact = () => {
           <div>
             <h3 className="text-xl font-semibold text-gray-900">Our Store</h3>
             <p className="mt-2">
-              54709 Willms Station <br />
-              Suite 350, Washington, USA
+              845426 Mehsi <br />
+              East Champaran, Bihar, India
             </p>
-            <p className="mt-2">Tel: (415) 555-0132</p>
+            <p className="mt-2">Phone: +91 960 848 3662</p>
             <p>Email: admin@primechoice.com</p>
           </div>
 

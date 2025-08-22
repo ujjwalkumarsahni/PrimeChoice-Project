@@ -14,13 +14,14 @@ const Login = () => {
       const response = await axios.post(`${backendUrl}/api/user/admin`,{email,password})
       if(response.data.success){
         setToken(response.data.token)
+        toast.success("Login successful!", {autoClose: 1000});
       }else{
-        toast.error(response.data.message)
+        toast.error(response.data.message, {autoClose: 1000})
       }
 
     } catch (error) {
       console.log(error);
-      toast.error(error.message)
+      toast.error(error.message ,{autoClose: 2000})
     }
   };
 
