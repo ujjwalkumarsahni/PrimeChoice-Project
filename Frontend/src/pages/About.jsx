@@ -1,7 +1,7 @@
 import React from "react";
 import { Title } from "../components/Title";
 import { assets } from "../assets/assets.js";
-import NewsletterBox from "../components/NewsletterBox.jsx";
+import Newsbox from "../components/Newsbox.jsx";
 
 const About = () => {
   return (
@@ -78,7 +78,7 @@ const About = () => {
       </div>
 
       {/* Newsletter */}
-      <NewsletterBox />
+      <Newsbox />
     </div>
   );
 };
