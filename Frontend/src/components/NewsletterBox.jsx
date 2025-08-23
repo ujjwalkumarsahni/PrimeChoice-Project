@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { ShopContext } from "../context/ShopContext.jsx";
 
-const NewsletterBox = () => {
+const Newsletterbox = () => {
   const [email, setEmail] = useState("");
   const { token, backendUrl, setHasDiscount } = useContext(ShopContext);
 
@@ -74,4 +74,4 @@ const NewsletterBox = () => {
   );
 };
 
-export default NewsletterBox;
+export default Newsletterbox;
