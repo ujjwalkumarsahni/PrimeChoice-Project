@@ -24,7 +24,7 @@ const Login = () => {
         });
         if (response.data.success) {
           setToken(response.data.token);
-          toast.success("Account created successfully!");
+          toast.success("Account created successfully!", {autoClose: 1000});
         } else {
           toast.error(response.data.message);
         }
@@ -35,7 +35,7 @@ const Login = () => {
         });
         if (response.data.success) {
           setToken(response.data.token);
-          toast.success("Login successful!");
+          toast.success("Login successful!", {autoClose: 1000});
         } else {
           toast.error(response.data.message);
         }

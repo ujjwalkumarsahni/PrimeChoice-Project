@@ -42,7 +42,7 @@ const PlaceOrder = () => {
           if (data.success) {
             navigate('/orders');
             setCartItems({})
-            toast.success(data.message);
+            toast.success(data.message, {autoClose: 1000});
           } else {
             toast.error(data.message || "Payment verification failed");
           }
@@ -61,42 +61,42 @@ const PlaceOrder = () => {
 
   const validateForm = () => {
     if (!formData.firstName || formData.firstName.length < 3) {
-      toast.error("First name must be at least 2 characters");
+      toast.error("First name must be at least 2 characters", {autoClose: 500});
       return false;
     }
     if (!formData.lastName || formData.lastName.length < 3) {
-      toast.error("Last name must be at least 2 characters");
+      toast.error("Last name must be at least 2 characters", {autoClose: 500});
       return false;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      toast.error("Enter a valid email");
+      toast.error("Enter a valid email", {autoClose: 500});
       return false;
     }
     if (!formData.street || formData.street.length < 3) {
-      toast.error("Street must be at least 3 characters");
+      toast.error("Street must be at least 3 characters", {autoClose: 500});
       return false;
     }
     if (!formData.city || formData.city.length < 3) {
-      toast.error("Enter a valid city");
+      toast.error("Enter a valid city", {autoClose: 500});
       return false;
     }
     if (!formData.state || formData.state.length < 3) {
-      toast.error("Enter a valid state");
+      toast.error("Enter a valid state", {autoClose: 500});
       return false;
     }
     const zipRegex = /^[0-9]{4,6}$/;
     if (!zipRegex.test(formData.zipcode)) {
-      toast.error("Enter a valid zipcode (4–6 digits)");
+      toast.error("Enter a valid zipcode (4–6 digits)", {autoClose: 500});
       return false;
     }
     if (!formData.country || formData.country.length < 2) {
-      toast.error("Enter a valid country");
+      toast.error("Enter a valid country", {autoClose: 500});
       return false;
     }
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(formData.phone)) {
-      toast.error("Enter a valid 10-digit phone number");
+      toast.error("Enter a valid 10-digit phone number", {autoClose: 500});
       return false;
     }
     return true;
@@ -143,10 +143,10 @@ const PlaceOrder = () => {
           const response = await axios.post(`${backendUrl}/api/order/place`, orderData, { headers: { token } })
           if (response.data.success) {
             setCartItems({})
-            toast.success(response.data.message)
+            toast.success(response.data.message, {autoClose: 1000})
             navigate('/orders')
           } else {
-            toast.error(response.data.message)
+            toast.error(response.data.message, {autoClose: 1000})
           }
           break;
         case 'stripe':

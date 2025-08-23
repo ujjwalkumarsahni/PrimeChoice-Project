@@ -149,7 +149,11 @@ const Orders = () => {
                   {
                     item.status == "Delivered" || item.status == "Cancelled" ? '' : (
                       <button
-                        onClick={() => cancelOrder(item.orderId)}
+                        onClick={() => {
+                          if (window.confirm("Are you sure you want to cancel this order?")) {
+                            cancelOrder(item.orderId);
+                          }
+                        }}
                         className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
                       >
                         Cancel Order

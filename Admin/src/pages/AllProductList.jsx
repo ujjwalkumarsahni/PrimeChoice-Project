@@ -39,9 +39,9 @@ const AllProductList = () => {
       );
       if (res.data.success) {
         setProducts(products.filter((p) => p._id !== id));
-        toast.success(res.data.message);
+        toast.success(res.data.message, {autoClose: 1000});
       } else {
-        toast.error(res.data.message);
+        toast.error(res.data.message, {autoClose: 1000});
       }
     } catch (err) {
       console.error("Error deleting product:", err);

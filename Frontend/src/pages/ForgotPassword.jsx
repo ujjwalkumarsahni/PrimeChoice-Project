@@ -14,7 +14,7 @@ const ForgotPassword = () => {
         try {
             const res = await axios.post(`${backendUrl}/api/user/forgot-password`, { email });
             if (res.data.success) {
-                toast.success("OTP sent to your email!");
+                toast.success("OTP sent to your email!", {autoClose: 1000} );
                 navigate("/reset-password", { state: { email } });
             } else {
                 toast.error(res.data.message || "Something went wrong");

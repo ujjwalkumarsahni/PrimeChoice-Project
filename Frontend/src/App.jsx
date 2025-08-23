@@ -15,7 +15,6 @@ import Footer from './components/Footer.jsx'
 import Searchbar from './components/Searchbar.jsx'
 import Verify from './pages/Verify.jsx';
 import Profile from './pages/Profile.jsx';
-// import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
 

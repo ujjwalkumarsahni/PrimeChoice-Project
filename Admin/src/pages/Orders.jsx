@@ -26,7 +26,7 @@ const Orders = () => {
         { headers: { token } }
       );
       if (response.data.success) {
-        setOrders(response.data.orders);
+        setOrders(response.data.orders, {autoClose: 1000});
       } else {
         toast.error(response.data.message);
       }
@@ -48,7 +48,7 @@ const Orders = () => {
 
       if (response.data.success) {
         await fetchAllOrders();
-        toast.success("Order status updated!");
+        toast.success("Order status updated!", {autoClose: 500});
       } else {
         toast.error(response.data.message);
       }
@@ -69,7 +69,7 @@ const Orders = () => {
 
       if (response.data.success) {
         await fetchAllOrders();
-        toast.success("Order cancelled successfully!");
+        toast.success("Order cancelled successfully!", {autoClose: 1000});
       } else {
         toast.error(response.data.message);
       }

@@ -59,7 +59,7 @@ const AddProduct = () => {
       });
 
       if (res.data.success) {
-        toast.success(res.data.message);
+        toast.success(res.data.message, {autoClose: 1000});
         setFormData({
           name: "",
           description: "",
