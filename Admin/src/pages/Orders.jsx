@@ -26,7 +26,7 @@ const Orders = () => {
         { headers: { token } }
       );
       if (response.data.success) {
-        setOrders(response.data.orders, {autoClose: 1000});
+        setOrders(response.data.orders);
       } else {
         toast.error(response.data.message);
       }

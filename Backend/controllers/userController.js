@@ -2,7 +2,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
-import { PASSWORD_RESET_TEMPLATE } from "../config/EmailTempletes.js";
+import { PASSWORD_RESET_TEMPLATE, REGISTER_TEMPLATE } from "../config/EmailTempletes.js";
 import transporter from "../config/nodeMailer.js";
 
 // Create JWT token
@@ -44,6 +44,16 @@ export const registerUser = async (req, res) => {
     });
 
     const user = await newUser.save();
+
+    // Send welcome email
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: user.email,
+      subject: "Welcome! Your Account has been created ✅",
+      html: REGISTER_TEMPLATE.replace("{{name}}", user.name).replace("{{email}}", user.email),
+    };
+
+    await transporter.sendMail(mailOptions);
 
     // Generate token
     const token = createToken(user._id);
