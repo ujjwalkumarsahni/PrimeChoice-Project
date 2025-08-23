@@ -7,21 +7,20 @@ export const getDashboardStats = async (req, res) => {
     // Count total products
     const products = await productModel.countDocuments();
 
-    // Count total orders (number of order documents)
-    // const orders = await orderModel.countDocuments();
-
     // Count total users
     const customers = await userModel.countDocuments();
 
-    // Calculate total revenue
+    // ✅ Revenue (only paid & not cancelled orders)
     const revenueAgg = await orderModel.aggregate([
+      { $match: { status: { $ne: "Cancelled" }, payment: true } },
       { $group: { _id: null, total: { $sum: "$amount" } } },
     ]);
     const revenue = revenueAgg[0]?.total || 0;
 
-    // Calculate total items ordered (sum of all items.length per order)
+    // ✅ Orders count (only paid & not cancelled)
     const itemsAgg = await orderModel.aggregate([
-      { $project: { itemCount: { $size: "$items" } } }, 
+      { $match: { status: { $ne: "Cancelled" }, payment: true } },
+      { $project: { itemCount: { $size: "$items" } } },
       { $group: { _id: null, orders: { $sum: "$itemCount" } } },
     ]);
     const orders = itemsAgg[0]?.orders || 0;
@@ -29,10 +28,10 @@ export const getDashboardStats = async (req, res) => {
     return res.json({
       success: true,
       data: {
-        products,    
-        customers,   
-        revenue,    
-        orders,  
+        products,
+        customers,
+        revenue,
+        orders,
       },
     });
   } catch (err) {
