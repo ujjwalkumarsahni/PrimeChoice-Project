@@ -1,5 +1,5 @@
 import { NEWSLETTER_WELCOME_TEMPLATE } from "../config/EmailTempletes.js";
-import transporter from "../config/nodemailer.js";
+import transporter from "../config/nodeMailer.js";
 import Newsletter from "../models/newsletterModel.js";
 
 export const subscribe = async (req, res) => {
