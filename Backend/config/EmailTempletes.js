@@ -295,3 +295,95 @@ export const ORDER_STATUS_TEMPLATE = (name, orderId, amount, status) => {
   </html>
   `;
 };
+
+
+export const NEWSLETTER_WELCOME_TEMPLATE = (email) => {
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+
+      body { 
+        font-family: 'Arial', sans-serif; 
+        background: linear-gradient(135deg, #f4f7fa, #e8f0fe); 
+        padding: 20px; 
+      }
+      .container { 
+        max-width: 600px; 
+        margin: 0 auto; 
+        background: #fff; 
+        padding: 30px; 
+        border-radius: 15px; 
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
+        animation: fadeIn 1s ease-in-out; 
+      }
+      h2 { 
+        color: #4C83EE; 
+        text-align: center; 
+        margin-bottom: 20px; 
+      }
+      p { 
+        color: #333; 
+        line-height: 1.6; 
+        font-size: 15px;
+      }
+      .discount { 
+        background: linear-gradient(135deg, #22D172, #20b864); 
+        color: #fff; 
+        padding: 14px 24px; 
+        display: inline-block; 
+        border-radius: 10px; 
+        margin: 20px auto; 
+        font-weight: bold; 
+        font-size: 18px; 
+        animation: pulse 2s infinite; 
+      }
+      .btn { 
+        display: inline-block; 
+        margin-top: 25px; 
+        padding: 14px 24px; 
+        background: linear-gradient(135deg, #4C83EE, #6A5ACD); 
+        color: #fff; 
+        text-decoration: none; 
+        border-radius: 10px; 
+        font-weight: bold; 
+        text-align: center; 
+        animation: fadeIn 2s ease-in-out; 
+      }
+      .btn:hover { 
+        background: linear-gradient(135deg, #3b6bd6, #5941a9); 
+      }
+      .footer { 
+        margin-top: 30px; 
+        font-size: 12px; 
+        color: #888; 
+        text-align: center; 
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>🎉 Welcome to PrimeChoice Newsletter!</h2>
+      <p>Hi <b>${email}</b>,</p>
+      <p>We’re excited to have you on board. As a thank you for joining our family, here’s your special reward:</p>
+      <div class="discount">✨ 5% OFF on all your orders ✨</div>
+      <p>Apply it during checkout and enjoy shopping with us!</p>
+      <div style="text-align:center;">
+        <a href="${process.env.FRONTEND_URL || "#"}" class="btn">🛒 Start Shopping</a>
+      </div>
+      <div class="footer">&copy; ${new Date().getFullYear()} PrimeChoice. All rights reserved.</div>
+    </div>
+  </body>
+  </html>
+  `;
+};
