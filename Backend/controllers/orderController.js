@@ -263,3 +263,43 @@ export const updateOrders = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
+
+
+export const cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    const userId = req.body.userId; 
+
+    if (!orderId) {
+      return res.status(400).json({ success: false, message: "Order ID required" });
+    }
+
+    // Order find karo
+    const order = await orderModel.findOne({ _id: orderId, userId });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    // Agar already delivered hai to cancel mat karo
+    if (order.status === "Delivered") {
+      return res.status(400).json({
+        success: false,
+        message: "Delivered order cannot be cancelled",
+      });
+    }
+
+    // Cancel kar do
+    order.status = "Cancelled";
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Order cancelled successfully",
+      order,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

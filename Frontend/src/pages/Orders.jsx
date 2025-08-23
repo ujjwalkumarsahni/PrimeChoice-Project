@@ -3,7 +3,7 @@ import { ShopContext } from "../context/ShopContext.jsx";
 import { Title } from "../components/Title.jsx";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { ShoppingCart } from "lucide-react"; // Icon for empty state
+import { ShoppingCart } from "lucide-react";
 
 const Orders = () => {
   const { backendUrl, token, currency, navigate } = useContext(ShopContext);
@@ -26,6 +26,7 @@ const Orders = () => {
           order.items.forEach((item) => {
             allOrdersItem.push({
               ...item,
+              orderId: order._id,
               status: order.status,
               payment: order.payment,
               paymentMethod: order.paymentMethod,
@@ -36,6 +37,27 @@ const Orders = () => {
         });
 
         setOrderData(allOrdersItem.reverse());
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  // Cancel order function
+  const cancelOrder = async (orderId) => {
+    try {
+      const response = await axios.post(
+        `${backendUrl}/api/order/cancel`,
+        { orderId },
+        { headers: { token } }
+      );
+
+      if (response.data.success) {
+        toast.success("Order cancelled successfully!", { autoClose: 1000 });
+        loadOrderData();
+      } else {
+        toast.error(response.data.message || "Failed to cancel order");
       }
     } catch (error) {
       console.log(error);
@@ -62,7 +84,7 @@ const Orders = () => {
             You haven't placed any orders yet. Start shopping and your orders will appear here.
           </p>
           <button
-            onClick={() => navigate("/collection")} // navigate to shop page
+            onClick={() => navigate("/collection")}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Browse Products
@@ -93,9 +115,13 @@ const Orders = () => {
                     <p>Size: {item.size}</p>
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    Date:{" "}
+                    Placed On:{" "}
                     <span className="font-medium">
-                      {new Date(item.date).toDateString()}
+                      {new Date(item.date).toLocaleDateString()}{" "}
+                      {new Date(item.date).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </span>
                   </p>
                   <p className="text-xs text-gray-500 mt-2">
@@ -107,15 +133,29 @@ const Orders = () => {
               {/* Order Status & Action */}
               <div className="flex justify-between items-center mt-4 pt-4 border-t">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                  <span className={`w-2 h-2 rounded-full ${item.status === "Delivered" ? "bg-green-500" : "bg-yellow-500"}`}></span>
                   <p className="text-sm text-gray-700">{item.status}</p>
                 </div>
-                <button
-                  onClick={loadOrderData}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                >
-                  Track Order
-                </button>
+
+                <div className="flex gap-3">
+                  {item.status == "Delivered" || item.status == "Cancelled" ? '' : (<button
+                    onClick={loadOrderData}
+                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Track Order
+                  </button>)}
+
+                  {/* Cancel Button */}
+                  {
+                    item.status == "Delivered" || item.status == "Cancelled" ? '' : (
+                      <button
+                        onClick={() => cancelOrder(item.orderId)}
+                        className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                      >
+                        Cancel Order
+                      </button>)
+                  }
+                </div>
               </div>
             </div>
           ))}
